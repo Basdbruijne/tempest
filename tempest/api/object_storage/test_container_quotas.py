@@ -13,12 +13,16 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import time
+
 from tempest.api.object_storage import base
 from tempest.common import utils
 from tempest.lib.common.utils import data_utils
 from tempest.lib import decorators
 from tempest.lib import exceptions as lib_exc
+from tempest import config
 
+CONF = config.CONF
 QUOTA_BYTES = 10
 QUOTA_COUNT = 3
 
@@ -94,6 +98,8 @@ class ContainerQuotasTest(base.BaseObjectTest):
 
         nbefore = self._get_object_count()
         self.assertEqual(nbefore, QUOTA_COUNT)
+
+        time.sleep(CONF.object_storage.quota_cache_timeout)
 
         self.assertRaises(lib_exc.OverLimit,
                           self.object_client.create_object,

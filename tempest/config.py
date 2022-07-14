@@ -1143,6 +1143,10 @@ ObjectStoreGroup = [
                help="One name of cluster which is set in the realm whose name "
                     "is set in 'realm_name' item in this file. Set the "
                     "same cluster name as Swift's container-sync-realms.conf"),
+    cfg.IntOpt('quota_cache_timeout',
+               default=0,
+               help="Number of seconds to wait for the object quota cache "
+                    "to refresh"),
 ]
 
 object_storage_feature_group = cfg.OptGroup(
