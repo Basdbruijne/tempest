@@ -95,11 +95,10 @@ class ContainerQuotasTest(base.BaseObjectTest):
         for _ in range(QUOTA_COUNT):
             name = data_utils.rand_name(name="TestObject")
             self.object_client.create_object(self.container_name, name, "")
+            self.wait_for_object(self.container_name, name)
 
         nbefore = self._get_object_count()
         self.assertEqual(nbefore, QUOTA_COUNT)
-
-        time.sleep(CONF.object_storage.quota_cache_timeout)
 
         self.assertRaises(lib_exc.OverLimit,
                           self.object_client.create_object,

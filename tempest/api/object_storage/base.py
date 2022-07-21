@@ -124,12 +124,25 @@ class BaseObjectTest(tempest.test.BaseTestCase):
                                                 object_name,
                                                 data,
                                                 metadata=metadata)
+                cls.wait_for_object(container_name, object_name)
                 return object_name, data
             # after bucket creation we might see Conflict
             except lib_exc.Conflict as e:
                 err = e
                 time.sleep(2)
         raise err
+
+    @classmethod
+    def wait_for_object(cls, container_name, object_name):
+        for _ in range(CONF.object_storage.build_timeout // 2 + 1):
+            try:
+                return cls.object_client.get_object(
+                    container_name, object_name)
+            except lib_exc.NotFound:
+                time.sleep(2)
+        raise lib_exc.TimeoutException(
+            "Failed to create object %s within the required time (%s s)." %
+            (object_name, CONF.object_storage.build_timeout))
 
     @classmethod
     def delete_containers(cls, container_client=None, object_client=None):
